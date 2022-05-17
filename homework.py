@@ -43,6 +43,7 @@ def send_message(bot, message):
     except exceptions.SendMessageFailure:
         logger.error('Возникла ошибка при отправке сообщения')
 
+
 def get_api_answer(current_timestamp):
     """Делает запрос к endpoint"""
     timestamp = current_timestamp
@@ -106,6 +107,7 @@ def check_tokens():
     """Проверяет наличие переменных окружения."""
     secret_info = [PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID]
     return None not in secret_info
+
 
 def main():
     """Основная логика работы бота."""
