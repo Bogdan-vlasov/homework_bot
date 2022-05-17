@@ -45,7 +45,7 @@ def send_message(bot, message):
 
 
 def get_api_answer(current_timestamp):
-    """Делает запрос к endpoint"""
+    '''Делает запрос к эндпоинту'''
     timestamp = current_timestamp
     params = {'from_date': timestamp}
     try:
