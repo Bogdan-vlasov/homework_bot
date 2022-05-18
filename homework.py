@@ -60,7 +60,7 @@ def check_response(response):
         logger.error(message)
         raise exceptions.CheckResponseException(message)
     if not homeworks_list:
-        message = f'Ошибка доступа по ключу homeworks:'
+        message = 'Ошибка доступа по ключу homeworks:'
         logger.error(message)
         raise exceptions.CheckResponseException(message)
     if not isinstance(homeworks_list, list):
@@ -76,15 +76,14 @@ def check_response(response):
 
 def parse_status(homework):
     """Извлекает из информации о домашке ее статус."""
-
     homework_name = homework.get('homework_name')
     if not homework_name:
-        message = f'Ошибка доступа по ключу homework_name'
+        message = 'Ошибка доступа по ключу homework_name'
         logger.error(message)
 
     homework_status = homework.get('status')
     if not homework_status:
-        message = f'Ошибка доступа по ключу status'
+        message = 'Ошибка доступа по ключу status'
         logger.error(message)
 
     verdict = settings.HOMEWORK_STATUSES[homework_status]
