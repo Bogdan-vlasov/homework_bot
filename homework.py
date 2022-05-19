@@ -75,7 +75,6 @@ def check_response(response):
     return homeworks_list
 
 
-
 def parse_status(homework):
     """Извлекает из информации о домашке ее статус."""
     homework_name = homework.get('homework_name')
@@ -94,7 +93,7 @@ def parse_status(homework):
         logger.error(message)
         raise exceptions.UnknownHWStatusException(message)
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
-            
+
 
 def check_tokens():
     """Проверяет наличие переменных окружения."""
