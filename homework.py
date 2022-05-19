@@ -1,6 +1,7 @@
 import logging
 import os
 import time
+from turtle import home
 
 import requests
 import telegram
@@ -55,11 +56,11 @@ def get_api_answer(current_timestamp):
 def check_response(response):
     """Проверяет ответ API."""
     homeworks_list = response['homeworks']
-    if homeworks_list is None:
+    if response is None:
         message = 'В ответе API нет словаря с домашними заданиями'
         logger.error(message)
         raise exceptions.CheckResponseException(message)
-    if not homeworks_list:
+    if not response.get('homeworks'):
         message = 'Ошибка доступа по ключу homeworks:'
         logger.error(message)
         raise exceptions.CheckResponseException(message)
@@ -67,11 +68,12 @@ def check_response(response):
         message = 'В ответе API домашние задания представлены не списком'
         logger.error(message)
         raise exceptions.CheckResponseException(message)
-    if len(homeworks_list) == 0:
-        message = 'За последнее время нет домашних заданий'
+    if not homeworks_list:
+        message = 'За последнее время заданий нет'
         logger.error(message)
         raise exceptions.CheckResponseException(message)
     return homeworks_list
+
 
 
 def parse_status(homework):
@@ -86,13 +88,13 @@ def parse_status(homework):
         message = 'Ошибка доступа по ключу status'
         logger.error(message)
 
-    verdict = settings.HOMEWORK_STATUSES[homework_status]
+    verdict = settings.HOMEWORK_STATUSES[homework.get('status')]
     if verdict is None:
         message = 'Неизвестный статус домашки'
         logger.error(message)
         raise exceptions.UnknownHWStatusException(message)
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
-
+            
 
 def check_tokens():
     """Проверяет наличие переменных окружения."""
