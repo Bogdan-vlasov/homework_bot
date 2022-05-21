@@ -54,44 +54,36 @@ def get_api_answer(current_timestamp):
 
 def check_response(response):
     """Проверяет ответ API."""
-    homeworks = response.get('homeworks')
-    if homeworks[0] is None:
-        message = 'В ответе API нет словаря с домашними заданиями'
-        logger.error(message)
-        raise exceptions.CheckResponseException(message)
-    if homeworks is None:
-        message = 'Ошибка доступа по ключу homeworks:'
-        logger.error(message)
-        raise exceptions.CheckResponseException(message)
-    if not isinstance(homeworks[0], dict):
-        message = 'В ответе Api не присутствует словарь с заданием'
-        logger.error(message)
-        raise exceptions.CheckResponseException(message)
-    if not isinstance(homeworks, list):
-        message = 'В ответе API домашние задания представлены не списком'
-        logger.error(message)
-        raise exceptions.CheckResponseException(message)
-    if not homeworks:
-        message = 'За последнее время заданий нет'
-        logger.error(message)
-        raise exceptions.CheckResponseException(message)
-    return homeworks
+
+    if not isinstance(response, dict):
+        message = 'Ответ API не словарь'
+        raise TypeError(message)
+    if response.get('homeworks')[0] is None:
+        message = 'Ошибка доступа по ключу "homeworks"'
+        raise KeyError(message)
+    if not isinstance(response.get('homeworks'), list):
+        message = 'Ответ API не является списком'
+        raise TypeError(message)
+    if ['homeworks'][0] not in response:
+        message = 'В ответе API нет домашней работы'
+        raise IndexError(message)
+    homework = response.get('homeworks')
+    return homework
 
 
-def parse_status(homeworks):
+def parse_status(homework):
     """Извлекает из информации о домашке ее статус."""
-    homework_name = homeworks.get('homework_name')
-    if homework_name is None:
-        message = 'Ошибка доступа по ключу homework_name'
-        raise exceptions.EmptyHWNameOrStatus
-    homework_status = homeworks.get('status')
-    if homework_status is None:
-        message = 'Ошибка доступа по ключу status'
-        raise exceptions.EmptyHWNameOrStatus
-    verdict = settings.HOMEWORK_STATUSES.get(homework_status)
-    if verdict is None:
-        message = 'Неизвестный статус домашки'
-        raise exceptions.UnknownHWStatusException(message)
+    keys = ['status', 'homework_name']
+    for key in keys:
+        if key not in homework:
+            message = f'Ключа {key} нет в ответе API'
+            raise KeyError(message)
+    homework_status = homework['status']
+    if homework_status not in settings.HOMEWORK_STATUSES:
+        message = 'Неизвестный статус домашней работы'
+        raise KeyError(message)
+    homework_name = homework['homework_name']
+    verdict = settings.HOMEWORK_STATUSES[homework_status]
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
 
 
