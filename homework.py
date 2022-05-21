@@ -54,7 +54,6 @@ def get_api_answer(current_timestamp):
 
 def check_response(response):
     """Проверяет ответ API."""
-
     if not isinstance(response, dict):
         message = 'Ответ API не словарь'
         raise TypeError(message)
