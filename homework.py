@@ -1,7 +1,6 @@
 import logging
 import os
 import time
-from turtle import home
 
 import requests
 import telegram
