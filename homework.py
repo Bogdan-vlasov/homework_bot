@@ -1,6 +1,7 @@
 import logging
 import os
 import time
+from turtle import home
 
 import requests
 import telegram
@@ -54,42 +55,43 @@ def get_api_answer(current_timestamp):
 
 def check_response(response):
     """Проверяет ответ API."""
-    homeworks_list = response['homeworks']
-    if response is None:
+    homeworks = response.get('homeworks')
+    if homeworks[0] is None:
         message = 'В ответе API нет словаря с домашними заданиями'
         logger.error(message)
         raise exceptions.CheckResponseException(message)
-    if not response.get('homeworks'):
+    if homeworks is None:
         message = 'Ошибка доступа по ключу homeworks:'
         logger.error(message)
         raise exceptions.CheckResponseException(message)
-    if not isinstance(homeworks_list, list):
+    if not isinstance(homeworks[0], dict):
+        message = 'В ответе Api не присутствует словарь с заданием'
+        logger.error(message)
+        raise exceptions.CheckResponseException(message)
+    if not isinstance(homeworks, list):
         message = 'В ответе API домашние задания представлены не списком'
         logger.error(message)
         raise exceptions.CheckResponseException(message)
-    if not homeworks_list:
+    if not homeworks:
         message = 'За последнее время заданий нет'
         logger.error(message)
         raise exceptions.CheckResponseException(message)
-    return homeworks_list
+    return homeworks
 
 
-def parse_status(homework):
+def parse_status(homeworks):
     """Извлекает из информации о домашке ее статус."""
-    homework_name = homework.get('homework_name')
-    if not homework_name:
+    homework_name = homeworks.get('homework_name')
+    if homework_name is None:
         message = 'Ошибка доступа по ключу homework_name'
-        logger.error(message)
-
-    homework_status = homework.get('status')
-    if not homework_status:
+        raise exceptions.EmptyHWNameOrStatus
+    homework_status = homeworks.get('status')
+    if homework_status is None:
         message = 'Ошибка доступа по ключу status'
-        logger.error(message)
-
-    verdict = settings.HOMEWORK_STATUSES[homework.get('status')]
+        raise exceptions.EmptyHWNameOrStatus
+    verdict = settings.HOMEWORK_STATUSES.get(homework_status)
     if verdict is None:
         message = 'Неизвестный статус домашки'
-        logger.error(message)
         raise exceptions.UnknownHWStatusException(message)
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
 
