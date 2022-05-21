@@ -82,8 +82,8 @@ def parse_status(homework):
     if homework_status not in settings.HOMEWORK_STATUSES:
         message = 'Неизвестный статус домашней работы'
         raise KeyError(message)
-    homework_name = homework['homework_name']
-    verdict = settings.HOMEWORK_STATUSES[homework_status]
+    homework_name = homework.get('homework_name')
+    verdict = settings.HOMEWORK_STATUSES.get(homework_status)
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
 
 
