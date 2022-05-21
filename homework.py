@@ -78,7 +78,7 @@ def parse_status(homework):
         if key not in homework:
             message = f'Ключа {key} нет в ответе API'
             raise KeyError(message)
-    homework_status = homework['status']
+    homework_status = homework.get('status')
     if homework_status not in settings.HOMEWORK_STATUSES:
         message = 'Неизвестный статус домашней работы'
         raise KeyError(message)
