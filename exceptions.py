@@ -10,6 +10,10 @@ class APIResponseStatusCodeException(Exception):
     pass
 
 
+class CheckResponseException(Exception):
+    pass
+
+
 class UnknownHWStatusException(Exception):
     """Исключение неизвестного статуса домашки."""
 

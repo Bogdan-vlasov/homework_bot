@@ -57,16 +57,16 @@ def check_response(response):
     if not isinstance(response, dict):
         message = 'Ответ API не словарь'
         raise TypeError(message)
-    if response.get('homeworks')[0] is None:
+    homework = response.get('homeworks')
+    if homework is None:
         message = 'Ошибка доступа по ключу "homeworks"'
         raise KeyError(message)
-    if not isinstance(response.get('homeworks'), list):
+    if not isinstance(homework, list):
         message = 'Ответ API не является списком'
         raise TypeError(message)
-    if ['homeworks'][0] not in response:
+    if not homework:
         message = 'В ответе API нет домашней работы'
-        raise IndexError(message)
-    homework = response.get('homeworks')
+        raise exceptions.CheckResponseException(message)
     return homework
 
 
